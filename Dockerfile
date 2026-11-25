@@ -19,5 +19,5 @@ RUN mkdir -p storage/framework/sessions storage/framework/views storage/framewor
 EXPOSE 10000
 CMD sed -ri "s/Listen 80/Listen ${PORT:-10000}/" /etc/apache2/ports.conf \
  && sed -ri "s/:80>/:${PORT:-10000}>/" /etc/apache2/sites-available/000-default.conf \
- && php artisan config:cache && php artisan route:cache && php artisan view:cache \
+ && if [ -z "$APP_KEY" ]; then export APP_KEY="$(php artisan key:generate --show)"; fi  && php artisan config:cache && php artisan route:cache && php artisan view:cache \
  && apache2-foreground
