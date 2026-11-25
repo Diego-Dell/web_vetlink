@@ -99,6 +99,13 @@ class ConsultaTest extends TestCase
         $this->assertNull(session('vetlink'));
     }
 
+    public function test_sin_configuracion_no_muestra_detalles_tecnicos(): void
+    {
+        config(['vetlink.supabase_url' => '', 'vetlink.supabase_key' => '']);
+        $this->from('/login')->followingRedirects()->post('/login', ['correo' => 'sofia@ejemplo.com', 'contrasena' => 'x'])
+            ->assertSee('no está disponible por el momento')->assertDontSee('SUPABASE');
+    }
+
     public function test_token_rechazado_vuelve_a_iniciar_sesion(): void
     {
         Http::fake(['supabase.prueba/*' => Http::response([], 401)]);

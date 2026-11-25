@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 // 1. Facade de Supabase: iniciar sesión con Auth y leer tablas con el token de la persona (RLS).
 class Supabase
@@ -25,7 +26,10 @@ class Supabase
     public function iniciarSesion(string $correo, string $contrasena): array
     {
         if ($this->url() === '' || config('vetlink.supabase_key') === '') {
-            return ['error' => 'Falta configurar SUPABASE_URL y SUPABASE_PUBLISHABLE_KEY en .env'];
+            // El detalle técnico queda en el registro del servidor; la persona ve un mensaje simple.
+            Log::error('VetLink web: faltan SUPABASE_URL o SUPABASE_PUBLISHABLE_KEY en las variables de entorno.');
+
+            return ['error' => 'El inicio de sesión no está disponible por el momento. Intentá más tarde.'];
         }
         try {
             $respuesta = $this->cliente()->post($this->url().'/auth/v1/token?grant_type=password', [
