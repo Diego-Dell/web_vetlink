@@ -30,7 +30,7 @@ class Consulta
                 'cuenta_id' => 'eq.'.session('vetlink.cuenta'),
                 'activa' => 'eq.true',
             ])->filter(fn ($v) => $v['granjas']['confirmada'] ?? false)
-                ->map(fn ($v) => $v['granjas'] + ['rol' => $v['rol']]);
+                ->map(fn ($v) => $v['granjas'] + ['rol' => $v['rol'] === 'dueno' ? 'dueño' : $v['rol']]);
             if ($granjas->isEmpty()) {
                 $granjas = $this->leer('granjas', ['select' => 'id,nombre,confirmada', 'confirmada' => 'eq.true'])
                     ->map(fn ($g) => $g + ['rol' => 'administrador']);
@@ -96,6 +96,21 @@ class Consulta
         }
 
         return $this->leer('prevenciones', ['ficha_id' => self::en($fichas->pluck('id')), 'order' => 'fecha_programada']);
+    }
+
+    // 4. Fechas de aplicación desde una fecha, para el gráfico por semana.
+    public function aplicacionesDesde(Collection $fichas, string $desde): Collection
+    {
+        if ($fichas->isEmpty()) {
+            return collect();
+        }
+
+        return $this->leer('aplicaciones', [
+            'select' => 'fecha_hora_real',
+            'ficha_id' => self::en($fichas->pluck('id')),
+            'anulado' => 'eq.false',
+            'fecha_hora_real' => 'gte.'.$desde,
+        ]);
     }
 
     public function atenciones(string $fichaId): Collection

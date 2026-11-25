@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\Consulta;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 // 1. Pantallas de consulta: Inicio, Gestionar ganado, Ficha del animal, Generar reportes y Perfil.
 class ConsultaController extends Controller
@@ -33,6 +34,8 @@ class ConsultaController extends Controller
         return view('consulta.inicio', [
             'granja' => $granja,
             'activos' => $activas->count(),
+            'enTratamiento' => $tratamientos->pluck('ficha_id')->unique()->count(),
+            'pendientesPrevencion' => $prevenciones->count(),
             'tratamientos' => $tratamientos,
             'faltantes' => $tratamientos->sum(fn ($t) => $t['avance']['faltan'] ?? 0),
             'prevenciones' => $prevenciones->take(6),
@@ -87,11 +90,23 @@ class ConsultaController extends Controller
         $desde = now()->subDays(['semana' => 7, 'mes' => 30, 'trimestre' => 90][$periodo])->toDateString();
         $fichas = $this->consulta->fichas($granja['id']);
         $tratamientos = $this->consulta->tratamientos($fichas, false)->filter(fn ($t) => $t['inicio'] >= $desde)->values();
+        // Aplicaciones agrupadas por semana (lunes) para el gráfico.
+        $semanas = [];
+        for ($s = now()->subDays(['semana' => 7, 'mes' => 30, 'trimestre' => 90][$periodo])->startOfWeek(); $s <= now(); $s = $s->copy()->addWeek()) {
+            $semanas[$s->toDateString()] = 0;
+        }
+        foreach ($this->consulta->aplicacionesDesde($fichas, $desde) as $a) {
+            $lunes = Carbon::parse($a['fecha_hora_real'])->startOfWeek()->toDateString();
+            if (isset($semanas[$lunes])) {
+                $semanas[$lunes]++;
+            }
+        }
 
         return view('consulta.reportes', [
             'granja' => $granja,
             'periodo' => $periodo,
             'desde' => $desde,
+            'semanas' => collect($semanas),
             'tratamientos' => $tratamientos,
             'aplicadas' => $tratamientos->sum(fn ($t) => $t['avance']['aplicadas']),
             'indicadas' => $tratamientos->sum(fn ($t) => $t['avance']['total'] ?? 0),

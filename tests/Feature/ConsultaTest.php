@@ -75,6 +75,13 @@ class ConsultaTest extends TestCase
         $this->conSesion()->get('/app/ganado/'.self::FICHA)->assertOk()->assertSee('Cefalexina')->assertSee('5 ml');
     }
 
+    public function test_reportes_y_perfil_con_menu_lateral_y_barra_inferior(): void
+    {
+        $this->simularSupabase();
+        $this->conSesion()->get('/app/reportes?periodo=mes')->assertOk()->assertSee('Aplicaciones por semana')->assertSee('class="lateral"', false)->assertSee('class="barra"', false);
+        $this->conSesion()->get('/app/perfil')->assertOk()->assertSee('Mis granjas')->assertSee('Los Pinos');
+    }
+
     public function test_filtros_invalidos_se_rechazan(): void
     {
         $this->simularSupabase();

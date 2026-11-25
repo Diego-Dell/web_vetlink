@@ -2,84 +2,177 @@
 :root {
   --fondo: #f6f7f0; --superficie: #ffffff; --suave: #e6ebdf; --borde: #dfe5d7; --verde: #2f5d46; --oscuro: #24402f;
   --texto-suave: #5f6b60; --ambar-fondo: #fcf0d9; --ambar: #9e660d; --rojo-fondo: #fae6e3; --rojo: #b83833;
-  --radio: 16px; --ancho: 480px;
+  --radio: 16px;
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: var(--fondo); color: var(--oscuro); font: 15px/1.45 "Figtree", system-ui, sans-serif; }
 h1, h2, h3 { font-family: "Plus Jakarta Sans", "Figtree", sans-serif; font-weight: 600; margin: 0; letter-spacing: -.01em; }
-h1 { font-size: 24px; } h2 { font-size: 16px; }
+h1 { font-size: 22px; } h2 { font-size: 16px; }
 a { color: var(--verde); text-decoration: none; }
+p { margin: 0; }
 .suave { color: var(--texto-suave); } .chico { font-size: 12px; }
 .icono { display: inline-flex; flex: none; color: currentColor; } .icono svg { width: 100%; height: 100%; }
 
-/* 2. Marco móvil: una columna como en la app, con barra inferior fija. */
-.movil { max-width: var(--ancho); margin: 0 auto; min-height: 100vh; background: var(--fondo); position: relative; padding-bottom: 96px; }
+/* 2. Estructura móvil: encabezado, contenido en una columna y barra inferior fija. */
+.app { min-height: 100vh; }
+.lateral { display: none; }
+.principal { max-width: 520px; margin: 0 auto; padding-bottom: 100px; }
 .cabecera { display: flex; align-items: center; gap: 12px; padding: 16px; }
 .cabecera .logo { width: 40px; height: 40px; border-radius: 12px; }
-.cabecera .titulo { flex: 1; min-width: 0; }
-.cabecera .titulo h1 { font-size: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cabecera .volver { width: 40px; height: 40px; border-radius: 50%; background: var(--superficie); border: 1px solid var(--borde); display: grid; place-items: center; color: var(--oscuro); }
-.granjas { position: relative; }
-.granjas summary { list-style: none; cursor: pointer; font-size: 12px; color: var(--texto-suave); }
+.cabecera .titulo { flex: 1; min-width: 0; display: grid; gap: 6px; }
+.cabecera .titulo h1 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cabecera .titulo .subtitulo { display: none; }
+.redondo { width: 40px; height: 40px; border-radius: 50%; background: var(--superficie); border: 1px solid var(--borde); display: grid; place-items: center; color: var(--oscuro); flex: none; }
+.candado { width: 32px; height: 32px; border-radius: 50%; background: var(--suave); color: var(--verde); display: grid; place-items: center; flex: none; }
+.granjas { position: relative; justify-self: start; }
+.granjas-pc { display: none; }
+.solo-pc { display: none !important; }
+.granjas summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; background: var(--superficie); border: 1px solid var(--borde); border-radius: 999px; padding: 4px 10px; font-size: 12px; font-weight: 600; }
 .granjas summary::-webkit-details-marker { display: none; }
-.granjas ul { position: absolute; left: 0; z-index: 5; margin: 6px 0 0; padding: 6px; list-style: none; background: var(--superficie); border: 1px solid var(--borde); border-radius: 12px; min-width: 220px; box-shadow: 0 8px 24px rgba(36,64,47,.12); }
+.granjas summary .rol { color: var(--texto-suave); font-weight: 500; }
+.granjas ul { position: absolute; left: 0; z-index: 20; margin: 6px 0 0; padding: 6px; list-style: none; background: var(--superficie); border: 1px solid var(--borde); border-radius: 12px; min-width: 220px; box-shadow: 0 8px 24px rgba(36,64,47,.12); }
 .granjas li a { display: block; padding: 10px 12px; border-radius: 8px; color: var(--oscuro); }
 .granjas li a:hover, .granjas li a.activa { background: var(--suave); }
-.contenido { padding: 0 16px; display: grid; gap: 14px; }
-.barra { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: var(--ancho); background: var(--superficie); border-top: 1px solid var(--borde); display: grid; grid-template-columns: repeat(4, 1fr); padding: 8px 8px calc(8px + env(safe-area-inset-bottom)); z-index: 10; }
+.contenido { padding: 0 16px; display: grid; gap: 14px; align-content: start; }
+.barra { position: fixed; bottom: 0; left: 0; right: 0; background: var(--superficie); border-top: 1px solid var(--borde); display: grid; grid-template-columns: repeat(4, 1fr); padding: 8px 8px calc(8px + env(safe-area-inset-bottom)); z-index: 10; }
 .barra a { display: grid; justify-items: center; gap: 4px; font-size: 11px; font-weight: 500; color: var(--texto-suave); padding: 4px 0; }
 .barra a .pastilla { padding: 4px 18px; border-radius: 999px; display: grid; place-items: center; }
 .barra a.activa { color: var(--verde); font-weight: 600; } .barra a.activa .pastilla { background: var(--suave); }
 
 /* 3. Piezas comunes, como los widgets de la app. */
-.tarjeta { background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio); padding: 16px; }
-.tarjeta.fila { display: flex; gap: 12px; align-items: center; color: var(--oscuro); }
-.burbuja { width: 40px; height: 40px; border-radius: 12px; background: var(--suave); color: var(--verde); display: grid; place-items: center; flex: none; }
+.tarjeta { background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio); padding: 16px; display: block; color: inherit; }
+.fila { display: flex; gap: 12px; align-items: center; }
 .fila .textos { flex: 1; min-width: 0; } .fila .textos strong { display: block; }
-.grupo { font-size: 16px; font-weight: 600; margin-top: 6px; }
+.burbuja { width: 40px; height: 40px; border-radius: 12px; background: var(--suave); color: var(--verde); display: grid; place-items: center; flex: none; }
+.burbuja.chica { width: 32px; height: 32px; border-radius: 10px; }
+.burbuja.grande { width: 56px; height: 56px; border-radius: 16px; }
+.burbuja.circulo { border-radius: 50%; }
+.grupo { display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: 600; margin-top: 4px; }
+.grupo a { font-size: 13px; }
 .aviso { display: flex; gap: 10px; background: var(--suave); color: var(--verde); border-radius: 12px; padding: 12px 14px; font-size: 13px; font-weight: 500; }
-.aviso.error { background: var(--rojo-fondo); color: var(--rojo); } .aviso.adv { background: var(--ambar-fondo); color: var(--ambar); }
+.aviso.error { background: var(--rojo-fondo); color: var(--rojo); }
 .cifras { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.cifra { font: 600 26px "Plus Jakarta Sans"; margin-top: 4px; }
+.kpi .fila { font-size: 12px; color: var(--texto-suave); font-weight: 500; }
+.cifra { font: 600 26px "Plus Jakarta Sans"; margin-top: 8px; }
 .chip { display: inline-block; border-radius: 999px; padding: 3px 10px; font-size: 11px; font-weight: 600; background: var(--suave); color: var(--verde); white-space: nowrap; }
 .chip.adv { background: var(--ambar-fondo); color: var(--ambar); } .chip.err { background: var(--rojo-fondo); color: var(--rojo); } .chip.neutro { background: var(--fondo); color: var(--texto-suave); border: 1px solid var(--borde); }
-.avance { margin-top: 8px; } .avance .fila-texto { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.avance { margin-top: 10px; } .avance .fila-texto { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; }
 .avance .fila-texto span:last-child { color: var(--texto-suave); font-weight: 500; }
 .pista { height: 8px; background: var(--suave); border-radius: 4px; margin-top: 4px; overflow: hidden; }
 .pista div { height: 100%; background: var(--verde); border-radius: 4px; }
+.detalle { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 12px; color: var(--texto-suave); }
 .filtros { display: grid; gap: 10px; }
 .campo { display: flex; align-items: center; gap: 10px; background: var(--superficie); border: 1px solid var(--borde); border-radius: 12px; padding: 0 14px; color: var(--texto-suave); }
-.campo input, .campo select { border: 0; outline: 0; background: transparent; font: inherit; color: var(--oscuro); padding: 14px 0; flex: 1; min-width: 0; }
+.campo input { border: 0; outline: 0; background: transparent; font: inherit; color: var(--oscuro); padding: 14px 0; flex: 1; min-width: 0; }
 .pildoras { display: flex; gap: 8px; overflow-x: auto; }
 .pildora { border: 1px solid var(--borde); border-radius: 999px; padding: 8px 14px; background: var(--superficie); color: var(--oscuro); font-weight: 600; font-size: 13px; white-space: nowrap; }
 .pildora.activa { background: var(--verde); border-color: var(--verde); color: #fff; }
-.boton { display: inline-flex; justify-content: center; align-items: center; gap: 8px; width: 100%; background: var(--verde); color: #fff; border: 0; border-radius: 14px; padding: 15px 18px; font: 600 15px "Figtree"; cursor: pointer; }
-.boton.secundario { background: var(--superficie); color: var(--oscuro); border: 1px solid var(--borde); }
+.boton { display: inline-flex; justify-content: center; align-items: center; gap: 8px; width: 100%; background: var(--verde); color: #fff; border: 1px solid var(--verde); border-radius: 14px; padding: 14px 20px; font: 600 15px "Figtree"; cursor: pointer; text-align: center; }
+.boton.secundario { background: var(--superficie); color: var(--oscuro); border-color: var(--borde); }
+.boton.peligro { color: var(--rojo); }
+.boton.angosto { width: auto; }
 .lista { display: grid; gap: 10px; }
-.datos { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin: 0; } .datos dt { color: var(--texto-suave); } .datos dd { margin: 0; font-weight: 600; text-align: right; }
-.linea { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--suave); } .linea:last-child { border-bottom: 0; }
-.vacio { text-align: center; color: var(--texto-suave); padding: 12px; }
+.datos { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin: 0; } .datos dt { color: var(--texto-suave); } .datos dd { margin: 0; font-weight: 600; text-align: right; }
+.linea { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--suave); } .linea:last-child { border-bottom: 0; }
+.linea .textos { flex: 1; }
+.vacio { text-align: center; color: var(--texto-suave); }
+.columna { display: grid; gap: 14px; align-content: start; }
+.columnas, .rejilla { display: grid; gap: 14px; }
+.perfil-tarjeta { display: grid; justify-items: center; gap: 6px; text-align: center; }
+.grafico { display: flex; align-items: flex-end; gap: 10px; height: 150px; margin-top: 12px; }
+.grafico .barra-dato { flex: 1; display: grid; justify-items: center; gap: 6px; align-content: end; height: 100%; font-size: 11px; color: var(--texto-suave); font-weight: 600; }
+.grafico .barra-dato span.b { width: 100%; background: var(--suave); border-radius: 6px 6px 0 0; min-height: 4px; }
+.grafico .barra-dato.ultima span.b { background: var(--verde); }
 
-/* 4. Landing e Iniciar sesión. */
-.landing .portada { position: relative; height: 340px; background: url("/img/login_vaca.png") center/cover; }
-.landing .portada::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(36,64,47,.15), rgba(36,64,47,.55)); }
-.landing .marca { position: absolute; z-index: 1; top: 20px; left: 16px; right: 16px; display: flex; align-items: center; justify-content: space-between; color: #fff; }
-.landing .marca div { display: flex; align-items: center; gap: 10px; font: 700 20px "Plus Jakarta Sans"; }
-.landing .marca img { width: 40px; height: 40px; border-radius: 12px; }
-.landing .marca a { color: #fff; font-weight: 600; font-size: 14px; border: 1px solid rgba(255,255,255,.6); border-radius: 999px; padding: 8px 14px; }
-.landing .hoja { position: relative; margin-top: -28px; background: var(--fondo); border-radius: 28px 28px 0 0; padding: 24px 16px 32px; display: grid; gap: 16px; }
-.landing h1 { font-size: 28px; line-height: 1.15; }
-.landing .rasgos { display: grid; gap: 10px; }
-.landing footer { text-align: center; padding: 8px 16px 24px; color: var(--texto-suave); font-size: 12px; }
+/* 4. Landing e Iniciar sesión (móvil): foto arriba y hoja con el contenido. */
+.land { min-height: 100vh; }
+.land-nav { position: absolute; z-index: 2; top: 0; left: 0; right: 0; display: flex; align-items: center; gap: 10px; padding: 16px; color: #fff; }
+.land-nav .marca { display: flex; align-items: center; gap: 10px; flex: 1; font: 700 19px "Plus Jakarta Sans"; color: #fff; }
+.land-nav img { width: 36px; height: 36px; border-radius: 11px; }
+.land-nav .enlace { display: none; }
+.land-nav .boton { width: auto; background: #fff; color: var(--verde); border-color: #fff; border-radius: 999px; padding: 8px 14px; font-size: 13px; }
+.land-hero { display: flex; flex-direction: column; position: relative; }
+.land-foto { order: -1; height: 300px; background: linear-gradient(180deg, rgba(36,64,47,.1), rgba(36,64,47,.55)), url("/img/login_vaca.png") center/cover; }
+.land-texto { position: relative; margin-top: -28px; background: var(--fondo); border-radius: 28px 28px 0 0; padding: 22px 16px 8px; display: grid; gap: 14px; }
+.land-texto h1 { font-size: 26px; line-height: 1.15; }
+.land-texto .botones { display: grid; gap: 10px; }
+.land-texto .botones .secundario { display: none; }
+.land-rasgos { padding: 8px 16px 24px; display: grid; gap: 10px; }
+.land-pie { text-align: center; padding: 8px 16px 24px; color: var(--texto-suave); font-size: 12px; }
+.acceso .land-foto { height: 230px; }
 .acceso form { display: grid; gap: 14px; }
 .acceso label { display: grid; gap: 8px; font-weight: 600; font-size: 13px; }
+.acceso .lema { display: none; }
 
-@media (min-width: 900px) {
-  body { background: #e9ede3; }
-  .movil { box-shadow: 0 0 0 1px var(--borde), 0 20px 60px rgba(36,64,47,.10); }
+/* 5. PC: menú lateral, encabezado amplio y contenido en columnas (mismo diseño de Figma). */
+@media (min-width: 960px) {
+  body { font-size: 15px; }
+  h1 { font-size: 28px; }
+  .app { display: grid; grid-template-columns: 256px 1fr; }
+  .lateral { display: flex; flex-direction: column; gap: 4px; position: sticky; top: 0; height: 100vh; background: var(--superficie); border-right: 1px solid var(--borde); padding: 24px 16px; }
+  .lateral .marca { display: flex; align-items: center; gap: 10px; padding: 0 8px 24px; }
+  .lateral .marca img { width: 40px; height: 40px; border-radius: 12px; }
+  .lateral .marca strong { font: 600 19px "Plus Jakarta Sans"; display: block; }
+  .lateral nav a { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 12px; color: var(--oscuro); font-weight: 500; }
+  .lateral nav a .icono { color: var(--texto-suave); }
+  .lateral nav a.activa { background: var(--suave); color: var(--verde); font-weight: 600; } .lateral nav a.activa .icono { color: var(--verde); }
+  .lateral .pie { margin-top: auto; display: grid; gap: 12px; }
+  .lateral .nota { display: flex; gap: 8px; background: var(--fondo); border-radius: 12px; padding: 10px 12px; font-size: 11px; color: var(--texto-suave); font-weight: 500; }
+  .lateral .yo { display: flex; align-items: center; gap: 10px; padding-left: 4px; }
+  .lateral .yo .textos { flex: 1; min-width: 0; } .lateral .yo .textos span { display: block; overflow: hidden; text-overflow: ellipsis; }
+  .lateral .yo button { background: none; border: 0; color: var(--rojo); cursor: pointer; padding: 4px; }
+  .principal { max-width: 1200px; width: 100%; padding: 32px 40px; margin: 0; }
+  .barra, .cabecera .logo, .candado { display: none; }
+  .cabecera { padding: 0 0 20px; gap: 14px; }
+  .cabecera .titulo { display: block; }
+  .cabecera .titulo .subtitulo { display: block; font-size: 14px; color: var(--texto-suave); margin-top: 4px; }
+  .cabecera .titulo .granjas { display: none; }
+  .cabecera .granjas-pc { display: block; }
+  .granjas-pc summary { border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+  .granjas-pc ul { left: auto; right: 0; }
+  .contenido { padding: 0; gap: 20px; }
+  .cifras { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .cifra { font-size: 30px; }
+  .tarjeta { padding: 18px 20px; }
+  .columnas { grid-template-columns: 3fr 2fr; gap: 16px; align-items: start; }
+  .columnas.mitad { grid-template-columns: 1fr 1fr; }
+  .columnas.perfil { grid-template-columns: 2fr 3fr; }
+  .rejilla { grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: start; }
+  .filtros { grid-template-columns: 1fr auto; align-items: center; }
+  .boton.angosto-pc { width: auto; }
+  .solo-movil { display: none !important; }
+  .boton.solo-pc { display: inline-flex !important; }
+
+  .land-nav { position: static; color: var(--oscuro); padding: 20px 80px; }
+  .land-nav .marca { color: var(--oscuro); font-size: 20px; }
+  .land-nav img { width: 40px; height: 40px; }
+  .land-nav .enlace { display: inline; color: var(--texto-suave); font-weight: 500; font-size: 14px; margin-right: 12px; }
+  .land-nav .boton { background: var(--verde); color: #fff; border-color: var(--verde); border-radius: 14px; padding: 12px 20px; font-size: 14px; }
+  .land-hero { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; padding: 24px 80px 0; max-width: 1440px; margin: 0 auto; }
+  .land-foto { order: 2; height: 420px; border-radius: 28px; background: url("/img/login_vaca.png") center/cover; }
+  .land-texto { margin: 0; padding: 0; background: none; border-radius: 0; gap: 20px; }
+  .land-texto h1 { font-size: 48px; }
+  .land-texto p.suave { font-size: 18px; }
+  .land-texto .botones { display: flex; gap: 12px; }
+  .land-texto .botones .boton { width: auto; }
+  .land-texto .botones .secundario { display: inline-flex; }
+  .land-rasgos { grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 40px 80px; max-width: 1440px; margin: 0 auto; }
+  .land-rasgos .tarjeta.fila { flex-direction: column; align-items: flex-start; }
+  .land-rasgos .aviso { grid-column: 1 / -1; }
+
+  .acceso { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
+  .acceso .land-nav { position: absolute; color: #fff; padding: 40px 48px; right: 50%; }
+  .acceso .land-nav .marca { color: #fff; font-size: 22px; }
+  .acceso .land-nav .boton { display: none; }
+  .acceso .land-hero { display: contents; }
+  .acceso .land-foto { height: auto; border-radius: 0; order: 0; background: linear-gradient(180deg, rgba(36,64,47,.05), rgba(36,64,47,.7)), url("/img/login_vaca.png") center/cover; position: relative; }
+  .acceso .lema { display: block; position: absolute; left: 48px; right: 48px; bottom: 56px; color: #fff; font: 700 30px/1.2 "Plus Jakarta Sans"; }
+  .acceso .land-texto { align-self: center; justify-self: center; width: 440px; background: var(--superficie); border: 1px solid var(--borde); border-radius: 20px; padding: 36px; gap: 16px; }
+  .acceso .land-texto .campo { background: var(--fondo); }
 }
 @media print {
-  .barra, .no-imprimir, .cabecera .volver { display: none !important; }
-  .movil { max-width: none; padding: 0; box-shadow: none; } body { background: #fff; }
+  .barra, .lateral, .no-imprimir, .cabecera .redondo, .granjas { display: none !important; }
+  .app { display: block; } .principal { max-width: none; padding: 0; } body { background: #fff; }
 }
